@@ -18,7 +18,7 @@ startstring:
 
     .global	towers
 towers:
-   push  {lr, r3, r4}                          /* Save calllee-saved registers to stack */
+   push  {lr, r3, r4}  /* Save calllee-saved registers to stack */
    push  {r0, r1, r2}  /* Save a copy of all 3 incoming parameters */
 if:
    cmp   r0, #1      /* Compare numDisks with 2 or (numDisks - 2)*/
