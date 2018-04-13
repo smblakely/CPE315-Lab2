@@ -18,44 +18,44 @@ startstring:
 
     .global	towers
 towers:
-   /* Save calllee-saved registers to stack */
-   
-   /* Save a copy of all 3 incoming parameters */
-
+   push  {lr, r3, r4}                          /* Save calllee-saved registers to stack */
+   push  {r0, r1, r2}  /* Save a copy of all 3 incoming parameters */
 if:
-   /* Compare numDisks with 2 or (numDisks - 2)*/
-   /* Check if less than, else branch to else */
-   
-   /* set print function's start to incoming start */
-   /* set print function's end to goal */
-   /* call print function */
-   /* Set return register to 1 */
-   /* branch to endif */
+   cmp   r0, #1      /* Compare numDisks with 2 or (numDisks - 2)*/
+   bne   else        /* Check if less than, else branch to else */
+   mov   r0, r1      /* set print function's start to incoming start */
+   mov   r1, r2      /* set print function's end to goal */
+   bl    print       /* call print function */
+   mov   r0, #1      /* Set return register to 1 */
+   b     endif       /* branch to endif */
 else:
-   /* Use a callee-saved varable for temp and set it to 6 */
-   /* Subract start from temp and store to itself */
-   /* Subtract goal from temp and store to itself (temp = 6 - start - goal)*/
+   mov   r3, #6      /* Use a callee-saved varable for temp and set it to 6 */
+   sub   r3, r3, r1  /* Subract start from temp and store to itself */
+   sub   r3, r3, r2  /* Subtract goal from temp and store to itself */
+   sub   r0, r0, #1  /* subtract 1 from original numDisks and store it to numDisks parameter */
+   mov   r2, r3      /* Set end parameter as temp */
+   bl    towers      /* Call towers function */
+   mov   r4, r0      /* Save result to callee-saved register for total steps */
 
-   /* subtract 1 from original numDisks and store it to numDisks parameter */
+   mov   r0, #1      /* Set numDiscs parameter to 1 */
+   ldr   r1, [sp, #4]/* Set start parameter to original start */
+   ldr   r2, [sp, #8]/* Set goal parameter to original goal */
+   bl    towers      /* Call towers function */
+   add   r4, r4, r0  /* Add result to total steps so far */
 
-   /* Set end parameter as temp */
-   /* Call towers function */
-   /* Save result to callee-saved register for total steps */
-   /* Set numDiscs parameter to 1 */
-   /* Set start parameter to original start */
-   /* Set goal parameter to original goal */
-   /* Call towers function */
-   /* Add result to total steps so far */
-   
-   /* Set numDisks parameter to original numDisks - 1 */
-   /* set start parameter to temp */
-   /* set goal parameter to original goal */
-   /* Call towers function */
-   /* Add result to total steps so far and save it to return register */
-
+   ldr   r0, [sp, #0]
+   sub   r0, r0, #1  /* Set numDisks parameter to original numDisks - 1 */
+   mov   r1, r3      /* set start parameter to temp */
+   ldr   r2, [sp, #8]/* set goal parameter to original goal */
+   bl    towers      /* Call towers function */
+   add   r4, r4, r0/* Add result to total steps so far and save it to return register */
+   mov   r0, r4
 endif:
    /* Restore Registers */
-
+   add   sp, sp, #4
+   pop   {r1, r2}
+   pop   {lr, r3, r4}
+   mov   pc, lr
 @ Function main is complete, no modifications needed
     .global	main
 main:
